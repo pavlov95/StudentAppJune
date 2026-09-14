@@ -26,13 +26,6 @@ jobs:
 
       name: My Deploy
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-
   deploy:
     needs: build_test
     runs-on: ubuntu-latest
