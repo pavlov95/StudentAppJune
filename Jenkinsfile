@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS 20'
-    }
-
     options {
         skipDefaultCheckout(true)
     }
@@ -16,6 +12,13 @@ pipeline {
             }
         }
 
+        stage('Check Node.js') {
+            steps {
+                bat 'node --version'
+                bat 'npm --version'
+            }
+        }
+
         stage('Install dependencies') {
             steps {
                 bat 'npm ci'
@@ -24,10 +27,7 @@ pipeline {
 
         stage('Start application') {
             steps {
-                powershell '''
-                    $process = Start-Process npm -ArgumentList "start" -PassThru
-                    $process.Id | Out-File app.pid
-                '''
+                bat 'start /B npm start'
             }
         }
 
@@ -57,19 +57,6 @@ pipeline {
             steps {
                 bat 'npm test'
             }
-        }
-    }
-
-    post {
-        always {
-            powershell '''
-                if (Test-Path app.pid) {
-                    $pid = Get-Content app.pid
-
-                    Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-                    Remove-Item app.pid
-                }
-            '''
         }
     }
 }
