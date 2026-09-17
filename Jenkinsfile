@@ -2,20 +2,20 @@ pipeline {
     agent any
 
     stages {
-        stage('Install') {
+        stage('Install dependencies') {
             steps {
                 bat 'npm ci'
             }
         }
 
-        stage('Test') {
+        stage('Run tests') {
             steps {
                 powershell '''
                     $app = Start-Process node `
-                        -ArgumentList "index.js" `
+                        -ArgumentList "index.js", "8888" `
                         -PassThru
 
-                    Start-Sleep -Seconds 3
+                    Start-Sleep -Seconds 2
 
                     try {
                         npm.cmd test
